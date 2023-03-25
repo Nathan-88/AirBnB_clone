@@ -3,14 +3,20 @@
  */
 /* Footer style */
 footer {
+    display: flex;
     border-top: 1px solid #CCCCCC;
-    text-align: center;
-    background-color: #ffffff;
     height: 60px;
     width: 100%;
-    bottom: 0;
+    background-color: white;
+    align-items: stretch;
+    flex-direction: row;
     justify-content: center;
-    position: absolute;
-    align-items: center;
+    bottom: 0;
+    position: fixed;
+}
+
+.footText {
+    text-align: center;
     display: flex;
+    align-items: center;
 }
