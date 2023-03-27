@@ -22,7 +22,8 @@ body {
 }
 
 .container {
-    max-width: 1000px;
+    width: min(100% - 30px, 1000px);
     margin: 30px auto;
+    margin-inline: auto;
     height: 250%;
 }
