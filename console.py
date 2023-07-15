@@ -75,7 +75,7 @@ class HBNBCommand(cmd.Cmd):
             if key not in obj.keys():
                 print("** no instance found **")
             else:
-                del(obj[key])
+                del (obj[key])
                 storage.save()
 
     def do_all(self, line):
@@ -120,6 +120,63 @@ class HBNBCommand(cmd.Cmd):
             else:
                 setattr(objs[key], args[2], args[3])
                 storage.save()
+
+    def default(self, line):
+        """Called on an input line when the command prefix is not recognized.
+
+        If this method is not overridden, it prints an error message and
+        returns. It has been overriden and extended here :)
+
+        """
+        cmd_str, full_args = self.parser(line)
+        if hasattr(self, cmd_str):
+            cmd_fn = getattr(self, cmd_str)
+            return cmd_fn(full_args)
+        self.stdout.write('*** Unknown syntax: %s\n' % line)
+
+    def parser(self, line):
+        obj_type, others = line.split(".")
+        cmd_chars = []
+
+        for char in others:
+            if char == "(":
+                break
+            cmd_chars.append(char)
+        start = len(cmd_chars)
+        args = others[start:]
+        args = args[1:-1]
+        count = args.count(",")
+        if count > 0:
+            # print(count)
+            args = args.split(",")
+            print(args)
+            count = args[1].count("{")
+            if count > 0:
+                obj_id = args[0]
+                attr_dict = "".join(args[1:])
+                attr_dict = attr_dict.strip()
+                attr_dict = attr_dict[1:-1]
+                print(attr_dict)
+                attr_dict = attr_dict.split(": ")
+                attr_dict.insert(0, obj_id)
+                args = " ".join(attr_dict)
+                self.update_dict = True
+                print(attr_dict)
+            else:
+                args = "".join(args)
+            print(args)
+            # print(args)
+        cmd_str = "".join(cmd_chars)
+        cmd_str = "".join(['do_', cmd_str])
+        full_args = " ".join([obj_type, args])
+        full_args = full_args.strip()
+        # self.stdout.write("-%s-\n" % full_args)
+        return cmd_str, full_args
+
+    def do_count(self, args):
+        """Return a count all needed instances"""
+        count = len(self.handle_all(args))
+        return self.print_msg(count)
 
 
 if __name__ == '__main__':
