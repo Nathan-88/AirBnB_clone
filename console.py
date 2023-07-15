@@ -147,7 +147,7 @@ class HBNBCommand(cmd.Cmd):
         """Check and return an instance"""
         i = 0
         len_obj = len(obj)
-        class_dict = self.class_dict
+        class_dict = storage.classes()
         all_objs = storage.all()
         if len_obj == 0:
             self.print_msg("** class name missing **")
