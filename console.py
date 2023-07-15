@@ -101,25 +101,70 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, line):
         """Command handler updates an instance based on the class
         name and id by adding or updating an attribute"""
-        args = line.split()
-        if not args:
-            print("** class name missing **")
-        elif args[0] not in storage.classes():
-            print("** class doesn't exist **")
-        elif len(args) == 1:
-            print("** instance id missing **")
-        elif len(args) == 2:
-            print("** attribute name missing **")
-        elif len(args) == 3:
-            print("** value missing **")
-        else:
-            objs = storage.all()
-            key = "{}.{}".format(args[0], args[1])
-            if key not in objs.keys():
-                print("** no instance found **")
-            else:
-                setattr(objs[key], args[2], args[3])
-                storage.save()
+        attr_list = line.split()
+        len_attr = len(attr_list)
+        # print(self.instance_check(attr_list))
+        check, instance_data = self.instance_check(attr_list)
+        if check:
+            if len_attr < 3:
+                return self.print_msg("** attribute name missing **")
+            elif len_attr < 4:
+                return self.print_msg("** value missing **")
+            instance = instance_data[0]
+            start = 2
+            stop = start + 2
+            again = True
+            while again:
+                attribute_name, attribute_value = attr_list[start:stop]
+                if attribute_value[0] == '"' and attr_list[-1] is attribute_value:
+                    if attribute_value[-1] == '"':
+                        attribute_value = attribute_value[1:-1]
+                    else:
+                        attribute_value = attribute_value[1:]
+                elif attribute_value[0] == '"':
+                    start = stop
+                    for value in attr_list[start:]:
+                        attribute_value = " ".join([attribute_value, value])
+                        stop += 1
+                        if value[-1] == '"':
+                            attribute_value = attribute_value[1:-1]
+                            break
+                        elif attr_list[-1] is value:
+                            attribute_value = "".join([attribute_value, '"'])
+                            attribute_value = attribute_value[1:-1]
+                setattr(instance, attribute_name, attribute_value)
+                if self.update_dict and len(attr_list) > stop:
+                    again = True
+                    start = stop
+                    stop = start + 2
+                else:
+                    again = False
+                    self.update_dict = False
+                # obj_dict[key] = instance.to_dict()
+            instance.save()
+
+    def instance_check(self, obj):
+        """Check and return an instance"""
+        i = 0
+        len_obj = len(obj)
+        class_dict = self.class_dict
+        all_objs = storage.all()
+        if len_obj == 0:
+            self.print_msg("** class name missing **")
+            return False, None
+        elif obj[i] not in class_dict:
+            self.print_msg("** class doesn't exist **")
+            return False, None
+        elif len_obj == 1:
+            self.print_msg("** instance id missing **")
+            return False, None
+        class_name, obj_id = obj[:2]
+        key = ".".join([class_name, obj_id])
+        if key not in all_objs:
+            self.print_msg("** no instance found **")
+            return False, None
+        instance = all_objs[key]
+        return True, [instance, all_objs, key]
 
     def default(self, line):
         """Called on an input line when the command prefix is not recognized.
