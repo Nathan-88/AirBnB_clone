@@ -173,10 +173,34 @@ class HBNBCommand(cmd.Cmd):
         # self.stdout.write("-%s-\n" % full_args)
         return cmd_str, full_args
 
+    def handle_all(self, args):
+        class_dict = storage.classes()
+        obj_dict = storage.all()
+        all_instances = []
+        class_instances = []
+        if len(args) == 0:
+            for key in obj_dict:
+                instance = obj_dict[key]
+                all_instances.append(str(instance))
+            return all_instances
+        else:
+            if args not in class_dict:
+                return self.print_msg("** class doesn't exist **")
+            for key in obj_dict:
+                instance_dict = obj_dict[key].to_dict()
+                if instance_dict["__class__"] == args:
+                    instance = obj_dict[key]
+                    class_instances.append(str(instance))
+            return class_instances
+
     def do_count(self, args):
         """Return a count all needed instances"""
         count = len(self.handle_all(args))
         return self.print_msg(count)
+
+    def print_msg(self, msg=None):
+        """Called to handle messages"""
+        self.stdout.write("{}\n".format(msg))
 
 
 if __name__ == '__main__':
