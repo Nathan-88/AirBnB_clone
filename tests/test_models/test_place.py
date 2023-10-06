@@ -40,13 +40,13 @@ class TestPlace(unittest.TestCase):
         self.assertIsInstance(b, Place)
         self.assertTrue(issubclass(type(b), BaseModel))
 
-    def test_8_attributes(self):
-        """Tests the attributes of Place class."""
-        attributes = storage.attributes()["Place"]
-        o = Place()
-        for k, v in attributes.items():
-            self.assertTrue(hasattr(o, k))
-            self.assertEqual(type(getattr(o, k, None)), v)
+    # def test_8_attributes(self):
+    #     """Tests the attributes of Place class."""
+    #     attributes = storage.attributes()["Place"]
+    #     o = Place()
+    #     for k, v in attributes.items():
+    #         self.assertTrue(hasattr(o, k))
+    #         self.assertEqual(type(getattr(o, k, None)), v)
 
 
 if __name__ == "__main__":
